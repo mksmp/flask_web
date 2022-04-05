@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1 class="mb-4">Проверка номера телефона</h1>
+
+    <form method="post" class="needs-validation" novalidate>
+        <div class="has-validation w-50 d-flex m-auto flex-column">
+            <input type="text" class="form-control {% if request.method == 'POST' and (err_msg_symbols or err_msg_volume)%}is-invalid{% elif request.method == 'POST' and not(err_msg_symbols or err_msg_volume) %}is-valid{% endif %}" name="telephone" value="{{ request.form.telephone }}" aria-describedby="inputTelephone" required>
+            <button class="btn mt-4 btn-secondary w-25 mx-auto" type="submit">Проверить</button>
+            <div class="{% if request.method == 'POST' and (err_msg_symbols or err_msg_volume)%}invalid-feedback{% elif request.method == 'POST' and not(err_msg_symbols or err_msg_volume) %}valid-feedback{% endif %}" id="inputTelephone">
+                {% if request.method == 'POST' and err_msg_symbols%}
+                    {{ err_msg_symbols }}
+                {% endif %}
+                {% if request.method == 'POST' and err_msg_volume%}
+                    {{ err_msg_volume }}
+                {% endif %}
+                {% if not(err_msg_symbols or err_msg_volume) %}
+                    {{ result }}
+                {% endif %}
+            </div>
+                
+        </div>
+    </form>
+
+
+    <!-- {% if request.method == 'POST' and err_msg_symbols and not(check)%}
+        <p class="mt-3" style="color: red;">{{ err_msg_symbols }}</p>
+    {% endif %}
+    {% if request.method == 'POST' and err_msg_volume and not(check)%}
+        <p class="mt-3" style="color: red;">{{ err_msg_volume }}</p>
+    {% endif %}
+    {% if not(err_msg_symbols or err_msg_volume) %}
+        <p class="mt-3" style="color: green;">Номер телефона введен верно.</p>
+        <p style="color: green;">{{ result }}</p>
+    {% endif %} -->
+
+{% endblock %}
