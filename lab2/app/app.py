@@ -1,5 +1,3 @@
-from email import message
-import imp
 from flask import Flask, render_template, request, make_response
 import operator as op
 import string
@@ -40,11 +38,9 @@ def check_tel():
                 err_msg_symbols = 'Недопустимый ввод. В номере телефона встречаются недопустимые символы.'
         if count == 11 and (request.form.get('telephone').startswith('8') or request.form.get('telephone').startswith('+7')) and check:
             pass
-            # result = '8-' + result[1:4] + '-' + result[4:7] + '-' + result[7:9] + '-' + result[9:11]
         
         elif count == 10 and not(request.form.get('telephone').startswith('8') and request.form.get('telephone').startswith('+7')) and check:
             result = '8' + result
-            # result = '8-' + result[0:3] + '-' + result[3:6] + '-' + result[6:8] + '-' + result[8:10]
         elif count != 11 and count != 10:
             check = False
             err_msg_volume = 'Недопустимый ввод. Неверное количество цифр.'
