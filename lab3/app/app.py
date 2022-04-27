@@ -12,9 +12,10 @@ application = app
 
 login_manager.init_app(app)
 
-class User(UserMixin):
+class User(UserMixin): # usermixin для упрощения реализации класса user. По умолчанию реализует все стандартные поля
     def __init__(self, user_id, login, password):
-        super().__init__()
+        super().__init__() # при помощи super вызывается родительский метод и дополняется своим методом. 
+        # super.init вызывает инициализацию родительского класса
         self.id = user_id
         self.login = login
         self.password = password
@@ -53,8 +54,8 @@ def login():
         for user in get_users():
             if user['login'] == login_ and user['password'] == password:
                 login_user(User(**user), remember=remember_me)
-                flash('Вы успешно прошли процедуру аутентификации.', 'success')
-                next_ = request.args.get('next')
+                flash('Вы успешно прошли процедуру аутентификации.', 'success') # уведомление об успешном проходе
+                next_ = request.args.get('next') # если не использовать next, то наше приложение будет отрыто для перенаправлений
                 return redirect(next_ or url_for('index'))
         flash('Введены неверные логин и/или пароль.', 'danger')
     return render_template('login.html')
@@ -62,11 +63,11 @@ def login():
 
 @app.route('/logout')
 def logout():
-    logout_user()
+    logout_user() # выход из учетки и редирект на главную
     return redirect(url_for('index'))
 
 
 @app.route('/secret_page')
-@login_required
+@login_required # если пользователь не авторизирован, то выдаст ошибку, что мы не авторизированы - 401
 def secret_page():
     return render_template('secret_page.html')
