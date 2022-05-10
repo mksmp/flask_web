@@ -5,6 +5,6 @@
 
 <h1>Создание пользователя</h1>
 
-{{ render_user_form(url_for('create'), roles, user) }}
+{{ render_user_form(url_for('create'), roles, err_msg, user) }}
 
 {% endblock %}

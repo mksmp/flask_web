@@ -1,0 +1,35 @@
+{% macro render_changepass_form(url, err_msg, user_pass={}) %}
+    <form action="{{ url }}" method="POST" style="max-width: 40rem;" class="form-floating">
+            <div class="row mb-3">
+                <label for="old_pass" class="col-sm-2 col-form-label">Старый пароль</label>
+                <div class="col-sm-10">
+                    <input type="password" class="form-control {% if err_msg[0]!='' %}is-invalid{% endif %}" name="old_pass" id="old_pass" value="{{ user_pass.old_pass or '' }}">
+                </div>
+                {% if err_msg[0]!='' %}
+                    <label for="old_pass" class="mt-3">{{ err_msg[0] }}</label>
+                {% endif %}
+            </div>
+            <div class="row mb-3">
+                <label for="new_pass" class="col-sm-2 col-form-label">Пароль</label>
+                <div class="col-sm-10">
+                    <input type="password" class="form-control {% if err_msg[1]!='' %}is-invalid{% endif %}" name="new_pass" id="new_pass" value="{{ user_pass.new_pass or '' }}">
+                </div>
+            {% if err_msg[1]!='' %}
+                <label for="new_pass" class="mt-3">{{ err_msg[1] }}</label>
+            {% endif %}
+            </div>
+        <div class="row mb-3">
+            <label for="r_new_pass" class="col-sm-2 col-form-label">Новый пароль</label>
+            <div class="col-sm-10">
+                <input type="password" class="form-control {% if err_msg[2]!='' %}is-invalid{% endif %}" name="r_new_pass" id="r_new_pass" value="{{ user_pass.r_new_pass or '' }}">
+            </div>
+            {% if err_msg[2]!='' %}
+                <label for="r_new_pass" class="mt-3">{{ err_msg[2] }}</label>
+            {% endif %}
+        </div>
+        
+        <div class="row mb-3">
+            <button type="submit" class="btn btn-primary">Сохранить</button>
+        </div>
+    </form>
+{% endmacro %}

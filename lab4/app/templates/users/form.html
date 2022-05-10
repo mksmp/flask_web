@@ -1,47 +1,67 @@
-{% macro render_user_form(url, roles, user={}) %}
-<form action="{{ url }}" method="POST" style="max-width: 40rem;">
-    <div class="row mb-3">
-        <label for="login" class="col-sm-2 col-form-label">Логин</label>
-        <div class="col-sm-10">
-          <input type="text" class="form-control" name="login" id="login" value="{{ user.login or '' }}">
+{% macro render_user_form(url, roles, err_msg, user={}) %}
+    <form action="{{ url }}" method="POST" style="max-width: 40rem;" class="form-floating">
+        {% if request.endpoint in ['new', 'create'] %} 
+            <div class="row mb-3">
+                <label for="login" class="col-sm-2 col-form-label">Логин</label>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control {% if err_msg[0]!='' %}is-invalid{% endif %}" name="login" id="login" value="{{ user.login or '' }}">
+                </div>
+                {% if err_msg[0]!='' %}
+                    <label for="login" class="mt-3">{{ err_msg[0] }}</label>
+                {% endif %}
+            </div>
+            <div class="row mb-3">
+                <label for="password" class="col-sm-2 col-form-label">Пароль</label>
+                <div class="col-sm-10">
+                    <input type="password" class="form-control {% if err_msg[1]!='' %}is-invalid{% endif %}" name="password" id="password" value="{{ user.password or '' }}">
+                </div>
+            {% if err_msg[1]!='' %}
+                <label for="password" class="mt-3">{{ err_msg[1] }}</label>
+            {% endif %}
+            </div>
+        {% endif %} 
+        <div class="row mb-3">
+            <label for="last_name" class="col-sm-2 col-form-label">Фамилия</label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control {% if err_msg[2]!='' %}is-invalid{% endif %}" name="last_name" id="last_name" value="{{ user.last_name or '' }}">
+            </div>
+            {% if err_msg[2]!='' %}
+                <label for="password" class="mt-3">{{ err_msg[2] }}</label>
+            {% endif %}
         </div>
-    </div>
-    <div class="row mb-3">
-        <label for="password" class="col-sm-2 col-form-label">Пароль</label>
-        <div class="col-sm-10">
-          <input type="password" class="form-control" name="password" id="password" value="{{ user.password or '' }}">
+        <div class="row mb-3">
+            <label for="first_name" class="col-sm-2 col-form-label">Имя</label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control {% if err_msg[3]!='' %}is-invalid{% endif %}" name="first_name" id="first_name" value="{{ user.first_name or '' }}">
+            </div>
+            {% if err_msg[3]!='' %}
+                <label for="password" class="mt-3">{{ err_msg[3] }}</label>
+            {% endif %}
         </div>
-    </div>
-    <div class="row mb-3">
-        <label for="last_name" class="col-sm-2 col-form-label">Фамилия</label>
-        <div class="col-sm-10">
-          <input type="text" class="form-control" name="last_name" id="last_name" value="{{ user.last_name or '' }}">
+        <div class="row mb-3">
+            <label for="middle_name" class="col-sm-2 col-form-label">Отчество</label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control {% if err_msg[4]!='' %}is-invalid{% endif %}" name="middle_name" id="middle_name" value="{{ user.middle_name or '' }}">
+            </div>
+            {% if err_msg[4]!='' %}
+                <label for="password" class="mt-3">{{ err_msg[4] }}</label>
+            {% endif %}
         </div>
-    </div>
-    <div class="row mb-3">
-        <label for="first_name" class="col-sm-2 col-form-label">Имя</label>
-        <div class="col-sm-10">
-          <input type="text" class="form-control" name="first_name" id="first_name" value="{{ user.first_name or '' }}">
+        <div class="row mb-3">
+            <label for="role_id" class="col-sm-2 col-form-label">Роль</label>
+            <div class="col-sm-10">
+                <select class="form-select" name="role_id" id="role_id">
+                    <!-- <option>Без роли</option> -->
+                    {% for role in roles %}
+                        <option value="{{ role.id }}" {% if user.role_id == role_id %}selected{% endif %}>
+                            {{ role.name }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
         </div>
-    </div>
-    <div class="row mb-3">
-        <label for="middle_name" class="col-sm-2 col-form-label">Отчество</label>
-        <div class="col-sm-10">
-          <input type="text" class="form-control" name="middle_name" id="middle_name" value="{{ user.middle_name or '' }}">
+        <div class="row mb-3">
+            <button type="submit" class="btn btn-primary">Сохранить</button>
         </div>
-    </div>
-    <div class="row mb-3">
-        <label for="role_id" class="col-sm-2 col-form-label">Роль</label>
-        <div class="col-sm-10">
-            <select class="form-select" name="role_id" id="role_id">
-                {% for role in roles %}
-                    <option value="{{ role.id }}" {% if user.role_id == role.id | string %}selected{% endif %}>{{ role.name }}</option>
-                {% endfor %}
-            </select>
-        </div>
-    </div>
-    <div class="mb-3">
-        <button type="submit" class="btn btn-primary">Сохранить</button>
-    </div>
-</form>
+    </form>
 {% endmacro %}

@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+{% from 'users/form_newpass.html' import render_changepass_form %}
+
+{% block content %}
+
+<h1>Смена пароля</h1>
+
+
+{{ render_changepass_form(url_for('change_pass', user_id=user_id), err_msg, user_pass) }}
+
+{% endblock %}
