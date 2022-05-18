@@ -9,6 +9,7 @@
         <tr>
             <th>№</th>
             <th>ФИО</th>
+            <th>Роль</th>
             <th></th>
         </tr>
     </thead>
@@ -16,21 +17,21 @@
         {% for user in users %}
             <tr>
                 <td>{{ loop.index }}</td>
-                <td class="full-user-name">{{ user.last_name }} {{ user.first_name }} {{ user.middle_name or ''}}</td>
+                <td class="full-user-name">{{ user.last_name }} {{ user.first_name }} {{ user.middle_name or '' }}</td>
                 <td>{{ user.role_name or '' }}</td>
                 <td>
                     <div class="btn-group">
                         {% if current_user.is_authenticated %}
                             {% if current_user.can('show', record=user) %}
-                                <a class="btn btn-primary" href="{{ url_for('show', user_id=user.id) }}">Просмотр</a>
+                            <a class="btn btn-primary" href="{{ url_for('show', user_id=user.id) }}">Просмотр</a>
                             {% endif %}
-                            {% if current_user.can('update', record=user) %}    
-                                <a class="btn btn-secondary" href="{{ url_for('edit', user_id=user.id) }}">Редактирование</a>
+                            {% if current_user.can('update', record=user) %}
+                            <a class="btn btn-secondary" href="{{ url_for('edit', user_id=user.id) }}">Редактирование</a>
                             {% endif %}
-                            {% if current_user.can('delete', record=user) %}    
-                                <button type="button" class="btn btn-danger" data-url="{{ url_for('delete', user_id=user.id) }}" data-bs-toggle="modal" data-bs-target="#delete-user-modal">
-                                    Удалить
-                                </button>
+                            {% if current_user.can('delete', record=user) %}
+                            <button type="button" class="btn btn-danger" data-url="{{ url_for('delete', user_id=user.id) }}" data-bs-toggle="modal" data-bs-target="#delete-user-modal">
+                                Удалить
+                            </button>
                             {% endif %}
                         {% endif %}
                     </div>
@@ -41,7 +42,7 @@
 </table>
 
 {% if current_user.is_authenticated and current_user.can('create') %}
-    <a class="btn btn-primary" href="{{ url_for('new') }}">Создать пользователя</a>
+<a class="btn btn-primary" href="{{ url_for('new') }}">Создать пользователя</a>
 {% endif %}
 
 <div class="modal fade" id="delete-user-modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -54,7 +55,6 @@
         <div class="modal-body">
           Вы уверены, что хотите удалить пользователя <span id="user-name"></span>?
           <form action="" method="POST">
-              <input type="hidden" name="user_id" value="">
               <input id="delete-btn" type="submit" class="d-none">
           </form>
         </div>
@@ -64,6 +64,6 @@
         </div>
       </div>
     </div>
-  </div>
+</div>
 
 {% endblock %}

@@ -1,54 +1,52 @@
 {% macro render_user_form(url, roles, current_user, user={}) %}
-    <form action="{{ url }}" method="POST" style="max-width: 40rem;">
-        {% if request.endpoint in ['new', 'create'] %} 
-            <div class="row mb-3">
-                <label for="login" class="col-sm-2 col-form-label">Логин</label>
-                <div class="col-sm-10">
-                    <input type="text" class="form-control" name="login" id="login" value="{{ user.login or '' }}">
-                </div>
-            </div>
-            <div class="row mb-3">
-                <label for="password" class="col-sm-2 col-form-label">Пароль</label>
-                <div class="col-sm-10">
-                    <input type="password" class="form-control" name="password" id="password" value="{{ user.password or '' }}">
-                </div>
-            </div>
-        {% endif %} 
-        <div class="row mb-3">
-            <label for="last_name" class="col-sm-2 col-form-label">Фамилия</label>
-            <div class="col-sm-10">
-                <input type="text" class="form-control" name="last_name" id="last_name" value="{{ user.last_name or '' }}">
-            </div>
+<form action="{{ url }}" method="POST" style="max-width: 40rem;">
+    {% if request.endpoint in ['new', 'create'] %}
+    <div class="row mb-3">
+        <label for="login" class="col-sm-2 col-form-label">Логин</label>
+        <div class="col-sm-10">
+          <input type="text" class="form-control" name="login" id="login" value="{{ user.login or '' }}">
         </div>
-        <div class="row mb-3">
-            <label for="first_name" class="col-sm-2 col-form-label">Имя</label>
-            <div class="col-sm-10">
-                <input type="text" class="form-control" name="first_name" id="first_name" value="{{ user.first_name or '' }}">
-            </div>
+    </div>
+    <div class="row mb-3">
+        <label for="password" class="col-sm-2 col-form-label">Пароль</label>
+        <div class="col-sm-10">
+          <input type="password" class="form-control" name="password" id="password" value="{{ user.password or '' }}">
         </div>
-        <div class="row mb-3">
-            <label for="middle_name" class="col-sm-2 col-form-label">Отчество</label>
-            <div class="col-sm-10">
-                <input type="text" class="form-control" name="middle_name" id="middle_name" value="{{ user.middle_name or '' }}">
-            </div>
+    </div>
+    {% endif %}
+    <div class="row mb-3">
+        <label for="last_name" class="col-sm-2 col-form-label">Фамилия</label>
+        <div class="col-sm-10">
+          <input type="text" class="form-control" name="last_name" id="last_name" value="{{ user.last_name or '' }}">
         </div>
-        {% if current_user.can('assign_role') or true%}
-            <div class="row mb-3">
-                <label for="role_id" class="col-sm-2 col-form-label">Роль</label>
-                <div class="col-sm-10">
-                    <select class="form-select" name="role_id" id="role_id">
-                        <option>Без роли</option>
-                        {% for role in roles %}
-                            <option value="{{ role.id }}" {% if user.role_id == role_id %}selected{% endif %}>
-                                {{ role.name }}
-                            </option>
-                        {% endfor %}
-                    </select>
-                </div>
-            </div>
-        {% endif %}
-        <div class="row mb-3">
-            <button type="submit" class="btn btn-primary">Сохранить</button>
+    </div>
+    <div class="row mb-3">
+        <label for="first_name" class="col-sm-2 col-form-label">Имя</label>
+        <div class="col-sm-10">
+          <input type="text" class="form-control" name="first_name" id="first_name" value="{{ user.first_name or '' }}">
         </div>
-    </form>
+    </div>
+    <div class="row mb-3">
+        <label for="middle_name" class="col-sm-2 col-form-label">Отчество</label>
+        <div class="col-sm-10">
+          <input type="text" class="form-control" name="middle_name" id="middle_name" value="{{ user.middle_name or '' }}">
+        </div>
+    </div>
+    {% if current_user.can('assign_role') or true %}
+    <div class="row mb-3">
+        <label for="role_id" class="col-sm-2 col-form-label">Роль</label>
+        <div class="col-sm-10">
+            <select class="form-select" name="role_id" id="role_id">
+                <option value="">Без роли</option>
+                {% for role in roles %}
+                    <option value="{{ role.id }}" {% if user.role_id == role.id %}selected{% endif %}>{{ role.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+    {% endif %}
+    <div class="mb-3">
+        <button type="submit" class="btn btn-primary">Сохранить</button>
+    </div>
+</form>
 {% endmacro %}
