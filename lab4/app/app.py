@@ -1,5 +1,5 @@
 from flask import Flask, render_template, session, request, redirect, url_for, flash
-from flask_login import LoginManager, UserMixin,  login_user, logout_user, login_required
+from flask_login import LoginManager, UserMixin,  login_user, logout_user, login_required, current_user
 from mysql_db import MySQL
 import mysql.connector as connector
 import re
@@ -115,21 +115,21 @@ def check_pass(passw):
     err_msg = ''
     if passw == None:
         return 'Поле не может быть пустым'
-    check_pass_eq = 0
     if not check_pass_len(passw):
-        check_pass_eq = check_pass_eq + 1
+        # check_pass_eq = check_pass_eq + 1
+        err_msg = err_msg + 'Пароль не должен быть короче 8 символов и длиннее 128 символов! \n'
     if not check_pass_oneletter(passw):
-        check_pass_eq = check_pass_eq + 1
-    # if not check_pass_latkir_arabdigit(passw):
-    #     check_pass_eq = check_pass_eq + 1
+        err_msg = err_msg + 'Пароль должен содержать хотя-бы одну заглавную и строчную буквы! \n'
+        # check_pass_eq = check_pass_eq + 1
     if not check_pass_digit(passw):
-        check_pass_eq = check_pass_eq + 1
+        err_msg = err_msg + 'Пароль должен содержать хотя бы одну цифру! \n'
+        # check_pass_eq = check_pass_eq + 1
     if not check_pass_specsymb(passw):
-        check_pass_eq = check_pass_eq + 1
+        err_msg = err_msg + 'Пароль может состоять только латинских или кириллических букв, цифр и символов: ~!?@#$%^&*_-+()[]{}></\|\"\'.,:;! \n'
+        # check_pass_eq = check_pass_eq + 1
     if ' ' in passw:
-        check_pass_eq = check_pass_eq + 1
-    if check_pass_eq != 0:
-        return 'Пароль не соответствует требованиям'
+        err_msg = err_msg + 'Пароль не должен содержать пробелов! \n'
+        # check_pass_eq = check_pass_eq + 1
     return err_msg
 
 
@@ -286,9 +286,10 @@ def delete(user_id):
     return redirect(url_for('users'))
 
 
-@app.route('/users/<int:user_id>/new_pass')
+@app.route('/users/new_pass')
 @login_required
-def new_pass(user_id):
+def new_pass():
+    user_id = current_user.id
     # with mysql.connection.cursor(named_tuple=True) as cursor:
     #     cursor.execute('SELECT * FROM users WHERE id=%s;', (user_id,))
     #     user = cursor.fetchone()
@@ -296,11 +297,11 @@ def new_pass(user_id):
 
 
 
-@app.route('/users/<int:user_id>/change_pass', methods=['POST'])
+@app.route('/users/change_pass', methods=['POST'])
 @login_required
-def change_pass(user_id):
+def change_pass():
     params = request_params(CHANGE_PASS_PARAMS)
-    # params['id'] = user_id
+    user_id = current_user.id
 
     err_msg = ['' for i in range(len(params))]
 
@@ -312,19 +313,20 @@ def change_pass(user_id):
     if params['r_new_pass'] == None:
         err_msg[2] = 'Поле не может быть пустым'
     
-    err_check = check_nulls(err_msg)
-    if err_check == False:
-        return render_template('users/newpass.html', user_pass=params, err_msg=err_msg, user_id=user_id)
+    # err_check = check_nulls(err_msg)
+    # if err_check == False:
+    #     return render_template('users/newpass.html', user_pass=params, err_msg=err_msg, user_id=user_id)
 
     with mysql.connection.cursor(named_tuple=True) as cursor:
         cursor.execute('SELECT password_hash FROM users WHERE id=%s;', (user_id,))
         old_pass = cursor.fetchone()
 
-    old_pass_h = hashlib.new('sha256')
-    old_pass_h.update(params['old_pass'].encode('utf-8'))
+    if params['old_pass'] != None:
+        old_pass_h = hashlib.new('sha256')
+        old_pass_h.update(params['old_pass'].encode('utf-8'))
 
-    if old_pass_h.hexdigest() != old_pass.password_hash:
-        err_msg[0] = 'Пароль не совпадает со старым'
+        if old_pass_h.hexdigest() != old_pass.password_hash:
+            err_msg[0] = 'Пароль не совпадает со старым'
     err_msg[1] = check_pass(params['new_pass'])
     if params['new_pass'] != params['r_new_pass']:
         err_msg[2] = 'Пароли не совпадают'

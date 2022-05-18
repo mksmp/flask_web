@@ -26,7 +26,9 @@
                             <button type="button" class="btn btn-danger" data-url="{{ url_for('delete', user_id=user.id) }}" data-bs-toggle="modal" data-bs-target="#delete-user-modal">
                                 Удалить
                             </button>
-                            <a class="btn btn-warning" href="{{ url_for('new_pass', user_id=user.id) }}">Сменить пароль</a>
+                            {% if current_user.id == user.id %}
+                                <a class="btn btn-warning" href="{{ url_for('new_pass') }}">Сменить пароль</a>
+                            {% endif %}
                         {% endif %}
                     </div>
                 </td>
