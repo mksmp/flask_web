@@ -30,7 +30,7 @@ def generate_report(records):
 def logs():
     page = request.args.get('page', 1, type=int)
 
-    if current_user.can("watch_stat"):
+    if current_user.can("view_stat_full"):
         query = ('SELECT visit_logs.*, users.last_name, users.first_name, users.middle_name' 
             ' FROM visit_logs LEFT JOIN users ON visit_logs.user_id = users.id' 
             ' ORDER BY visit_logs.created_at DESC' 
