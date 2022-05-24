@@ -11,9 +11,9 @@ PER_PAGE = 10
 
 def convert_to_csv(records):
     fields = records[0]._fields
-    result = 'No,' + ','.join(fields) + '\n'
+    result = 'No;' + ';'.join(fields) + '\n'
     for i, record in enumerate(records):
-        result += f'{i+1},' + ','.join([str(getattr(record, f, '')) for f in fields]) + '\n'
+        result += f'{i+1};' + ';'.join([str(getattr(record, f, '')) for f in fields]) + '\n'
 
     return result
 
