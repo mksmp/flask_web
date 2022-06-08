@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container d-flex w-50 justify-content-center flex-column">
+    <div class="mt-5"></div>
+    
+    {% for comment in review %}
+        <div class="d-flex mt-4">
+            <div class="flex-shrink-0">
+                <img src="{{ url_for('static', filename='images/default-profile-picture-300x300.jpeg') }}" class="rounded-circle comment-img" style="max-width: 50px;" alt="img-comment">
+            </div>
+            <div class="flex-grow-1 text-start ms-3">
+                <!-- ПЛОХАЯ РЕАЛИЗАЦИЯ -->
+                {% for user in users %}
+                    {% if user.id == comment.user_id %}
+                        <h5>{{ user.last_name }} {{ user.first_name }}</h5>
+                        <p class="mb-0">{{ comment.text | truncate(100)}}</p>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+    {% endfor %}
+
+<div class="mb-5"></div>
+</div>
+
+{% endblock %}
