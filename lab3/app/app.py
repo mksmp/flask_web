@@ -10,7 +10,7 @@ login_manager.login_message_category = 'warning'
 app = Flask(__name__)
 application = app
 
-login_manager.init_app(app)
+login_manager.init_app(app) # доступ логину ко входу в систему
 
 class User(UserMixin): # usermixin для упрощения реализации класса user. По умолчанию реализует все стандартные поля
     def __init__(self, user_id, login, password):

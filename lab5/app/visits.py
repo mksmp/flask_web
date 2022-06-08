@@ -1,5 +1,6 @@
 from flask import Flask, render_template, session, request, redirect, url_for, flash, Blueprint, send_file
-from flask_login import current_user
+from flask_login import current_user, login_required
+from auth import check_rights
 from app import mysql
 import math
 import io
@@ -65,8 +66,9 @@ def logs():
 
     return render_template('visits/logs.html', records=records, page=page, total_pages=total_pages)
 
-
 @bp.route('/stats/users')
+@login_required
+@check_rights('view_stat_full')
 def users_stat():
     query = ('SELECT users.last_name, users.first_name, users.middle_name, COUNT(*) AS count'
             ' FROM users RIGHT JOIN visit_logs ON visit_logs.user_id = users.id' 
@@ -84,8 +86,9 @@ def users_stat():
 
     return render_template('visits/users_stat.html', records=records)
 
-
 @bp.route('/stats/pages')
+@login_required
+@check_rights('view_stat_full')
 def pages_stat():
     query = ('SELECT DISTINCT(path), COUNT(*) as count' 
             ' FROM visit_logs' 
