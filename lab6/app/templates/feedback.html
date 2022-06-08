@@ -22,7 +22,7 @@
     </div>
 {% endmacro %}
 
-{% macro render_my_feedback(comment, current_user) %}
+{% macro render_my_feedback(review, current_user) %}
     <h2 class="mb-3 text-center text-uppercase font-weight-bold">Ваш отзыв</h2>
     <div class="container d-flex w-50 justify-content-center flex-column">
         <div class="mt-5"></div>
@@ -32,34 +32,31 @@
             </div>
             <div class="flex-grow-1 text-start ms-3">                
                 <h5>{{ current_user.last_name }} {{ current_user.first_name }}</h5>
-                <p class="mb-0">{{ comment.text | truncate(100)}}</p>
+                <p class="mb-0">{{ review.text | truncate(100)}}</p>
+                <h6>Оценка: {{ review.rating }}</h6>
+                <h6>{{ review.created_at }}</h6>
             </div>
         </div>
         <div class="mt-5"></div>
     </div>
 {% endmacro %}
 
-{% macro render_5rows_feedback(review, current_user, users) %}
-    <div class="container d-flex w-50 justify-content-center flex-column">
+{% macro render_rows_feedback(reviews) %}
         <div class="mt-5"></div>
         
-        {% for comment in review %}
+        {% for review in reviews %}
             <div class="d-flex mt-4">
                 <div class="flex-shrink-0">
                     <img src="{{ url_for('static', filename='images/default-profile-picture-300x300.jpeg') }}" class="rounded-circle comment-img" style="max-width: 50px;" alt="img-comment">
                 </div>
                 <div class="flex-grow-1 text-start ms-3">
-                    <!-- ПЛОХАЯ РЕАЛИЗАЦИЯ -->
-                    {% for user in users %}
-                        {% if user.id == comment.user_id %}
-                            <h5>{{ user.last_name }} {{ user.first_name }}</h5>
-                            <p class="mb-0">{{ comment.text | truncate(100)}}</p>
-                        {% endif %}
-                    {% endfor %}
+                    <h5>{{ review.user.last_name }} {{ review.user.first_name }}</h5>
+                    <p class="mb-0">{{ review.text | truncate(100)}}</p>
+                    <h6>Оценка: {{ review.rating }}</h6>
+                    <h6>{{ review.created_at }}</h6>
                 </div>
             </div>
         {% endfor %}
 
     <div class="mb-5"></div>
-    </div>
 {% endmacro %}

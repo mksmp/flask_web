@@ -1,4 +1,6 @@
+from crypt import methods
 from flask import Blueprint, render_template, request, flash, redirect, url_for
+from flask_login import current_user
 from app import db
 from models import Course, Category, Review, User
 from tools import CoursesFilter, ImageSaver
@@ -6,6 +8,8 @@ from tools import CoursesFilter, ImageSaver
 bp = Blueprint('courses', __name__, url_prefix='/courses')
 
 PER_PAGE = 3
+
+COMMENT_PAGE = 5
 
 COURSE_PARAMS = ['author_id', 'name', 'category_id', 'short_desc', 'full_desc']
 
@@ -57,27 +61,41 @@ def create():
 
 @bp.route('/<int:course_id>')
 def show(course_id):
-    course = Course.query.get(course_id)
-    review = Review.query.filter_by(course_id=course_id).all()
+    courses = Course.query.get(course_id)
+    reviews = Review.query.filter_by(course_id=course_id).limit(COMMENT_PAGE)
+    user_review = Review.query.filter_by(course_id=course_id, user_id=current_user.id).first()
     users = User.query.all()
 
-    return render_template('courses/show.html', course=course, review=review, users=users)
+    return render_template('courses/show.html', course=courses, review=reviews, users=users, user_review=user_review)
 
 @bp.route('/<int:course_id>', methods=['POST'])
 def send_comment(course_id):
-    review = Review(**comment_params())
-    course = Course.query.filter_by(id=course_id).first()
-    course.rating_num += 1
-    course.rating_sum += int(review.rating)
-    db.session.add(review)
+    reviews = Review(**comment_params())
+    courses = Course.query.filter_by(id=course_id).first()
+    courses.rating_num += 1
+    courses.rating_sum += int(reviews.rating)
+    db.session.add(reviews)
     db.session.commit()
-    review = Review.query.filter_by(course_id=course_id).all()
     flash('Комментарий был успешно добавлен!', 'success')
-    users = User.query.all()
-
-    return render_template('courses/show.html', course=course, review=review, users=users)
+    return redirect(url_for('courses.show', course_id=courses.id))
 
 @bp.route('/<int:course_id>/reviews')
 def reviews(course_id):
-    review = Review.query.filter_by(course_id=course_id).all()
-    return render_template('courses/reviews.html', review=review)
+    reviews = Review.query.filter_by(course_id=course_id).all()
+    courses = Course.query.filter_by(id=course_id).first()
+    return render_template('courses/reviews.html', reviews=reviews, courses=courses)
+
+@bp.route('/<int:course_id>/reviews', methods=['POST'])
+def reviews_sort(course_id):
+    reviews = Review.query.filter_by(course_id=course_id).all()
+    if request.form.get('sort-date') == 'new' and request.form.get('sort-rating') == 'good':
+        reviews = Review.query.filter_by(course_id=course_id).order_by(Review.created_at.asc(), Review.rating.desc()).all()
+    if request.form.get('sort-date') == 'new' and request.form.get('sort-rating') == 'bad':
+        reviews = Review.query.filter_by(course_id=course_id).order_by(Review.created_at.asc(), Review.rating.asc()).all()
+    if request.form.get('sort-date') == 'old' and request.form.get('sort-rating') == 'good':
+        reviews = Review.query.filter_by(course_id=course_id).order_by(Review.created_at.desc(), Review.rating.desc()).all()
+    if request.form.get('sort-date') == 'new' and request.form.get('sort-rating') == 'bad':
+        reviews = Review.query.filter_by(course_id=course_id).order_by(Review.created_at.desc(), Review.rating.asc()).all()
+    req_form = [request.form.get('sort-date'), request.form.get('sort-rating')]
+    courses = Course.query.filter_by(id=course_id).first()
+    return render_template('courses/reviews.html', reviews=reviews, courses=courses, req_form=req_form)

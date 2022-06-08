@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% from 'feedback.html' import render_feedback_form, render_my_feedback, render_5rows_feedback %}
+{% from 'feedback.html' import render_feedback_form, render_my_feedback, render_rows_feedback %}
 
 {% block content %}
 <div class="title-area position-relative" style="background-image: url({{ course.bg_image.url }});">
@@ -62,30 +62,28 @@
                 </button>
             </div>
         {% endif %}
-    </section>
-    <!-- ПЛОХАЯ РЕАЛИЗАЦИЯ -->
-    {% for comment in review %}
-        {% if current_user.id == comment.user_id %}
+    </section>    
+    {% if current_user.is_authenticated %}
+        {% if user_review %}
             <div class="mb-5">
-                {{ render_my_feedback(comment, current_user) }}
+                {{ render_my_feedback(user_review, current_user) }}
+            </div>
+        {% else %}
+            <div class="mb-5">
+                {{ render_feedback_form(course, current_user) }}
             </div>
         {% endif %}
-    {% endfor %}
-    <!-- ПЛОХАЯ РЕАЛИЗАЦИЯ -->
-    {% for comment in review %}
-        {% if current_user.id == comment.user_id %}
-            <div class="mb-5">
-                {{ render_5rows_feedback(review, current_user) }}
-            </div>
-        {% endif %}
-    {% endfor %}
-        
+    {% endif %}
+   
     <!-- ОТЗЫВЫ -->
 
     <h2 class="mb-3 text-center text-uppercase font-weight-bold">Отзывы</h2>
-    {{ render_5rows_feedback(review, current_user, users) }}
-    
-    <a href="{{ url_for('courses.reviews', course_id=course.id) }}" class="mb-5 text-center btn btn-dark">Все отзывы по данному курсу</a>
+        <div class="container d-flex w-50 justify-content-center flex-column">
+            {{ render_rows_feedback(review) }}
+        </div>
+    <div class="text-center">
+        <a href="{{ url_for('courses.reviews', course_id=course.id) }}" class="mb-5 text-center btn btn-dark">Все отзывы по данному курсу</a>
+    </div>
 
 </div>
 
