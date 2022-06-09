@@ -101,34 +101,28 @@ def send_comment(course_id):
 @bp.route('/<int:course_id>/reviews')
 def reviews(course_id):
     page = request.args.get('page', 1, type=int)
-    # reviews = Review.query.filter_by(course_id=course_id).all()
-    reviews = ReviewsFilter(**search_params()).perform()
+    reviews = ReviewsFilter(**search_params_comm(course_id)).perform_date_desc()
     courses = Course.query.filter_by(id=course_id).first()
     pagination = reviews.paginate(page, PER_PAGE_COMMENTS)
     reviews = pagination.items
     return render_template('courses/reviews.html', reviews=reviews, courses=courses, pagination=pagination, search_params=search_params_comm(course_id))
-    # return render_template('courses/reviews.html', reviews=reviews, courses=courses)
 
 
 @bp.route('/<int:course_id>/reviews', methods=['POST'])
 def reviews_sort(course_id):
     page = request.args.get('page', 1, type=int)
-    reviews = Review.query.filter_by(course_id=course_id).all()
-    
-    # reviews = CoursesFilter(**search_params()).perform()
-
+    reviews = ReviewsFilter(**search_params_comm(course_id)).perform_date_desc()
     if request.form.get('sort') == 'new':
-        reviews = Review.query.filter_by(course_id=course_id).order_by(Review.created_at.desc()).all()
+        reviews = ReviewsFilter(**search_params_comm(course_id)).perform_date_desc()
     if request.form.get('sort') == 'old':
-        reviews = Review.query.filter_by(course_id=course_id).order_by(Review.created_at.asc()).all()
+        reviews = ReviewsFilter(**search_params_comm(course_id)).perform_date_asc()
     if request.form.get('sort') == 'good':
-        reviews = Review.query.filter_by(course_id=course_id).order_by(Review.rating.desc()).all()
+        reviews = ReviewsFilter(**search_params_comm(course_id)).perform_rating_desc()
     if request.form.get('sort') == 'bad':
-        reviews = Review.query.filter_by(course_id=course_id).order_by(Review.rating.asc()).all()
+        reviews = ReviewsFilter(**search_params_comm(course_id)).perform_rating_asc()
     req_form = request.form.get('sort')
     courses = Course.query.filter_by(id=course_id).first()
-    # сделать один селектор и сортировать по нему!!!
-    # pagination = courses.paginate(page, PER_PAGE_COMMENTS)
-    # courses = pagination.items
-    return render_template('courses/reviews.html', reviews=reviews, courses=courses, req_form=req_form)
-    # return render_template('courses/reviews.html', reviews=reviews, courses=courses, req_form=req_form, pagination=pagination, search_params=search_params())
+    pagination = reviews.paginate(page, PER_PAGE_COMMENTS)
+    reviews = pagination.items
+    # return render_template('courses/reviews.html', reviews=reviews, courses=courses, req_form=req_form)
+    return render_template('courses/reviews.html', reviews=reviews, courses=courses, req_form=req_form, pagination=pagination, search_params=search_params_comm(course_id))

@@ -51,22 +51,19 @@ class ImageSaver:
 
 
 class ReviewsFilter:
-    def __init__(self, name, category_ids):
+    def __init__(self, name, category_ids, course_id):
         self.name = name
         self.category_ids = category_ids
-        self.query = Review.query
+        self.query = Review.query.filter_by(course_id=course_id)
 
-    def perform(self):
-        self.__filter_by_name()
-        self.__filter_by_category_ids()
+    def perform_date_desc(self):
         return self.query.order_by(Review.created_at.desc())
 
-    def __filter_by_name(self):
-        if self.name:
-            self.query = self.query.filter(
-                Review.name.ilike('%' + self.name + '%'))
+    def perform_date_asc(self):
+        return self.query.order_by(Review.created_at.asc())
 
-    def __filter_by_category_ids(self):
-        if self.category_ids:
-            self.query = self.query.filter(
-                Review.category_id.in_(self.category_ids))
+    def perform_rating_desc(self):
+        return self.query.order_by(Review.rating.desc())
+
+    def perform_rating_asc(self):
+        return self.query.order_by(Review.rating.asc())
