@@ -101,7 +101,7 @@ def send_comment(course_id):
 @bp.route('/<int:course_id>/reviews')
 def reviews(course_id):
     page = request.args.get('page', 1, type=int)
-    reviews = ReviewsFilter(**search_params_comm(course_id)).perform_date_desc()
+    reviews = ReviewsFilter(course_id).perform_date_desc()
     courses = Course.query.filter_by(id=course_id).first()
     pagination = reviews.paginate(page, PER_PAGE_COMMENTS)
     reviews = pagination.items
@@ -111,15 +111,15 @@ def reviews(course_id):
 @bp.route('/<int:course_id>/reviews', methods=['POST'])
 def reviews_sort(course_id):
     page = request.args.get('page', 1, type=int)
-    reviews = ReviewsFilter(**search_params_comm(course_id)).perform_date_desc()
+    reviews = ReviewsFilter(course_id).perform_date_desc()
     if request.form.get('sort') == 'new':
-        reviews = ReviewsFilter(**search_params_comm(course_id)).perform_date_desc()
+        reviews = ReviewsFilter(course_id).perform_date_desc()
     if request.form.get('sort') == 'old':
-        reviews = ReviewsFilter(**search_params_comm(course_id)).perform_date_asc()
+        reviews = ReviewsFilter(course_id).perform_date_asc()
     if request.form.get('sort') == 'good':
-        reviews = ReviewsFilter(**search_params_comm(course_id)).perform_rating_desc()
+        reviews = ReviewsFilter(course_id).perform_rating_desc()
     if request.form.get('sort') == 'bad':
-        reviews = ReviewsFilter(**search_params_comm(course_id)).perform_rating_asc()
+        reviews = ReviewsFilter(course_id).perform_rating_asc()
     req_form = request.form.get('sort')
     courses = Course.query.filter_by(id=course_id).first()
     pagination = reviews.paginate(page, PER_PAGE_COMMENTS)

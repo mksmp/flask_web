@@ -51,9 +51,7 @@ class ImageSaver:
 
 
 class ReviewsFilter:
-    def __init__(self, name, category_ids, course_id):
-        self.name = name
-        self.category_ids = category_ids
+    def __init__(self, course_id):
         self.query = Review.query.filter_by(course_id=course_id)
 
     def perform_date_desc(self):
